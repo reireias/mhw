@@ -104,6 +104,8 @@ class Condition:
         aff += SKILL_ATTACK[self.skills['attack']][1]
         # 渾身
         aff += SKILL_MAXIMUM_MIGHT[self.skills['maximum_might']]
+        # 達人の円筒
+        aff += 50 if self.buff['cylinder'] else 0
         return aff
 
     # 会心時上昇率

@@ -64,6 +64,10 @@ class TestCalculate(unittest.TestCase):
         condition.skills['elemental'] = 3
         dmg = calculate(target, motion, condition)
         self.assertEqual(488.0, dmg)
+        condition.buff['cylinder'] = 1
+        dmg = calculate(target, motion, condition)
+        self.assertEqual(524.5, dmg)
+        condition.buff['cylinder'] = 0
         condition.skills['weakness'] = 3
         dmg = calculate(target, motion, condition)
         self.assertEqual(524.5, dmg)
