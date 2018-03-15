@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Damage calculator
+MHW damage calculator
 """
 
 from collections import defaultdict
@@ -44,8 +44,10 @@ SKILL_FULL_CHARGE = [0, 5, 10, 20]
 # 属性強化 [Level] = 属性上昇
 SKILL_ELEMENTAL = [0, 3, 6, 10]
 
+
 class Condition:
     """
+    conditions(skill, buff, weapon)
     """
 
     def __init__(self):
@@ -53,7 +55,10 @@ class Condition:
         self.buff = defaultdict(int)
         self.weapon = (0, 0, 0, 'white')
 
-    def physical_atk(self):
+    def physical_power(self):
+        """
+        display value of physical power
+        """
         atk = self.weapon[0]
         # スキル 無属性強化
         if self.skills['non_elemental'] == 1:
@@ -78,6 +83,9 @@ class Condition:
         return atk
 
     def elemental_atk(self):
+        """
+        display value of elemental power
+        """
         # 属性強化
         elem = self.weapon[1]
         elem += SKILL_ELEMENTAL[self.skills['elemental']]
@@ -86,6 +94,9 @@ class Condition:
 
     # 会心率
     def affinity(self):
+        """
+        display value of affinity
+        """
         aff = self.weapon[2]
         # 見切り
         aff += SKILL_CRITICAL_EYE[self.skills['critical_eye']]
@@ -97,10 +108,16 @@ class Condition:
 
     # 会心時上昇率
     def critical(self):
+        """
+        critical damage ratio
+        """
         return 1.25 + 0.05 * self.skills['critical_boost']
 
 
 def calculate(target, motions, condition):
+    """
+    calculate damage
+    """
     dmg = 0
     for motion in motions:
         # 物理
@@ -108,7 +125,7 @@ def calculate(target, motions, condition):
         # モーション値 / 100
         physical *= motion / 100
         # 武器倍率
-        physical *= condition.physical_atk()
+        physical *= condition.physical_power()
         # 切れ味補正
         physical *= SHARPNESS[condition.weapon[3]]
         # 中腹補正
@@ -118,7 +135,9 @@ def calculate(target, motions, condition):
         # 肉質/100
         physical *= target[0] / 100
         # 会心補正
-        physical = [round(physical * 0.75), round(physical), round(physical * condition.critical())]
+        physicals = [round(physical * 0.75),
+                     round(physical),
+                     round(physical * condition.critical())]
 
         affinity = condition.affinity()
         # 弱点特効
@@ -127,9 +146,9 @@ def calculate(target, motions, condition):
         if affinity > 100:
             affinity = 100
         if affinity >= 0:
-            physical = (physical[2] * affinity + physical[1] * (100 - affinity)) / 100
+            physical = (physicals[2] * affinity + physicals[1] * (100 - affinity)) / 100
         else:
-            physical = (physical[1] * (100 + affinity) - physical[0] * affinity) / 100
+            physical = (physicals[1] * (100 + affinity) - physicals[0] * affinity) / 100
 
         # 属性
         elemental = condition.elemental_atk()
@@ -139,8 +158,8 @@ def calculate(target, motions, condition):
         elemental *= target[1] / 100
         # 属性会心
         if condition.skills['elemental_critical'] and affinity > 0:
-            elemental = [round(elemental), round(elemental * 1.35)]
-            elemental = (elemental[0] * (100 - affinity) + elemental[1] * affinity) / 100
+            elementals = [round(elemental), round(elemental * 1.35)]
+            elemental = (elementals[0] * (100 - affinity) + elementals[1] * affinity) / 100
         elemental = round(elemental)
         dmg = dmg + physical + elemental
     return dmg
