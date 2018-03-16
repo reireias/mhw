@@ -4,7 +4,7 @@ unit test for damage.py
 """
 
 import unittest
-from mhw import Condition, calculate, motionlist
+from mhw import Condition, calculate, motionlist, skill_rank
 
 
 class TestCalculate(unittest.TestCase):
@@ -86,3 +86,29 @@ class TestCalculate(unittest.TestCase):
         # レウス頭
         dmg = calculate((65, 30), [7], condition)
         self.assertEqual(19.5, dmg)
+
+    def test_skill_rank_exclude(self):
+        """
+        skill_rank method whith exclude argument
+        """
+        target = (65, 30)
+        weapon = (100, 0, 0, 'green')
+        motion = motionlist.DUAL_SWORD_A
+        rank = skill_rank(target, weapon, motion, 1)
+        self.assertEqual(1, rank[0][1]['non_elemental'])
+        rank = skill_rank(target, weapon, motion, 1, exclude_skills=['non_elemental'])
+        self.assertEqual(1, rank[0][1]['weakness'])
+
+    def test_skill_rank_include(self):
+        """
+        skill_rank method whith include argument
+        """
+        target = (65, 30)
+        weapon = (100, 0, 0, 'green')
+        motion = motionlist.DUAL_SWORD_A
+        rank = skill_rank(target, weapon, motion, 2)
+        self.assertEqual(1, rank[0][1]['non_elemental'])
+        self.assertEqual(1, rank[0][1]['full_charge'])
+        rank = skill_rank(target, weapon, motion, 2, include_skills={'weakness': 1})
+        self.assertEqual(1, rank[0][1]['non_elemental'])
+        self.assertEqual(1, rank[0][1]['weakness'])

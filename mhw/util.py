@@ -48,19 +48,39 @@ def generate_targets():
             yield (phy, ele)
 
 
-def skill_rank(target, weapon, motion, max_skill_point):
+def skill_rank(target, weapon, motion, max_skill_point, exclude_skills=None, include_skills=None):
     """
     ranking by skill patterns
     """
     result = []
-    target = (65, 30)
-    motion = motionlist.DUAL_SWORD_A
     condition = Condition()
     condition.weapon = weapon
     for pattern in generate_skill_patterns():
-        skill_count = sum(pattern.values())
-        if skill_count > max_skill_point:
+        # skill point
+        skill_point = sum(pattern.values())
+        if skill_point > max_skill_point:
             continue
+
+        # exclude
+        if exclude_skills is not None:
+            skip = False
+            for ex_skill in exclude_skills:
+                if pattern[ex_skill] > 0:
+                    skip = True
+                    break
+            if skip:
+                continue
+
+        # include
+        if include_skills is not None:
+            skip = False
+            for name, level in include_skills.items():
+                if pattern[name] != level:
+                    skip = True
+                    break
+            if skip:
+                continue
+
         condition.apply(pattern)
         dmg = calculate(target, motion, condition)
         result.append((dmg, pattern))
