@@ -88,7 +88,7 @@ class Condition:
         """
         atk = self.weapon[0]
         # スキル 無属性強化
-        if self.skills['non_elemental'] == 1:
+        if self.skills['non_elemental'] == 1 and self.weapon[1] == 0:
             atk *= 1.1
             atk = round(atk)
         # 護符
