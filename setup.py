@@ -5,7 +5,7 @@ from distutils.core import setup
 
 setup(
     name='mhw',
-    version='0.8',
+    version='0.9',
     description='MHW utility tools',
     author='reireiAs',
     author_email='reireiAs@gmail.com',

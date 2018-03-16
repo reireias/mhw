@@ -59,7 +59,7 @@ class TestCalculate(unittest.TestCase):
         # レウス頭
         target = (65, 30)
         # 乱舞
-        motion = motionlist.DUAL_SWORD_A
+        motion = motionlist.DUAL_BLADE_BLADE_DANCE
         dmg = calculate(target, motion, condition)
         self.assertEqual(440.0, dmg)
         condition.skills['elemental'] = 3
@@ -94,7 +94,7 @@ class TestCalculate(unittest.TestCase):
         """
         target = (65, 30)
         weapon = (100, 0, 0, 'green')
-        motion = motionlist.DUAL_SWORD_A
+        motion = motionlist.DUAL_BLADE_BLADE_DANCE
         rank = skill_rank(target, weapon, motion, 1)
         self.assertEqual(1, rank[0][1]['non_elemental'])
         rank = skill_rank(target, weapon, motion, 1, exclude_skills=['non_elemental'])
@@ -106,7 +106,7 @@ class TestCalculate(unittest.TestCase):
         """
         target = (65, 30)
         weapon = (100, 0, 0, 'green')
-        motion = motionlist.DUAL_SWORD_A
+        motion = motionlist.DUAL_BLADE_BLADE_DANCE
         rank = skill_rank(target, weapon, motion, 2)
         self.assertEqual(1, rank[0][1]['non_elemental'])
         self.assertEqual(1, rank[0][1]['full_charge'])
