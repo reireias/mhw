@@ -46,8 +46,12 @@ SKILL_ELEMENTAL = [0, 3, 6, 10]
 
 # 挑戦者 [Level] = (攻撃, 会心)
 SKILL_CHALLENGER = [
-    (0, 0)
-    # TODO
+    (0, 0),
+    (4, 3),
+    (8, 6),
+    (12, 9),
+    (16, 12),
+    (20, 15)
 ]
 
 SUPPORTED_SKILLS = [
@@ -192,7 +196,8 @@ def calculate(target, motions, condition):
         elemental = condition.elemental_atk()
         # 斬れ味補正
         elemental *= ELEMENTAL_SHARPNESS[condition.weapon[3]]
-        # TODO 怒り補正?
+        # 怒り補正
+        elemental *= 1.1 if anger else 1.0
         # 肉質
         elemental *= target[1] / 100
         # 属性会心
