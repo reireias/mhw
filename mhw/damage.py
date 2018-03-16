@@ -44,6 +44,25 @@ SKILL_FULL_CHARGE = [0, 5, 10, 20]
 # 属性強化 [Level] = 属性上昇
 SKILL_ELEMENTAL = [0, 3, 6, 10]
 
+# 挑戦者 [Level] = (攻撃, 会心)
+SKILL_CHALLENGER = [
+    (0, 0)
+    # TODO
+]
+
+SUPPORTED_SKILLS = [
+    'attack',
+    'weakness',
+    'critical_eye',
+    'maximum_might',
+    'full_charge',
+    'critical_boost',
+    'elemental',
+    'elemental_critical',
+    'non_elemental',
+    'challenger'
+]
+
 
 class Condition:
     """
@@ -55,7 +74,15 @@ class Condition:
         self.buff = defaultdict(int)
         self.weapon = (0, 0, 0, 'white')
 
-    def physical_power(self):
+    def apply(self, skills):
+        """
+        apply skill dict to condition
+        """
+        for skill in SUPPORTED_SKILLS:
+            if skill in skills:
+                self.skills[skill] = skills[skill]
+
+    def physical_power(self, anger=False):
         """
         display value of physical power
         """
@@ -80,6 +107,9 @@ class Condition:
         atk += SKILL_ATTACK[self.skills['attack']][0]
         # スキル フルチャージ
         atk += SKILL_FULL_CHARGE[self.skills['full_charge']]
+        # スキル 挑戦者
+        if anger:
+            atk += SKILL_CHALLENGER[self.skills['challenger']][0]
         return atk
 
     def elemental_atk(self):
@@ -93,7 +123,7 @@ class Condition:
         return elem
 
     # 会心率
-    def affinity(self):
+    def affinity(self, anger=False):
         """
         display value of affinity
         """
@@ -106,6 +136,9 @@ class Condition:
         aff += SKILL_MAXIMUM_MIGHT[self.skills['maximum_might']]
         # 達人の円筒
         aff += 50 if self.buff['cylinder'] else 0
+        # 挑戦者
+        if anger:
+            aff += SKILL_CHALLENGER[self.skills['challenger']][1]
         return aff
 
     # 会心時上昇率
@@ -120,6 +153,9 @@ def calculate(target, motions, condition):
     """
     calculate damage
     """
+    anger = False
+    if len(target) == 3:
+        anger = target[2]
     dmg = 0
     for motion in motions:
         # 物理
@@ -133,7 +169,7 @@ def calculate(target, motions, condition):
         # 中腹補正
         physical *= 1.0
         # 怒り補正
-        physical *= 1.0
+        physical *= 1.1 if anger else 1.0
         # 肉質/100
         physical *= target[0] / 100
         # 会心補正
@@ -156,6 +192,7 @@ def calculate(target, motions, condition):
         elemental = condition.elemental_atk()
         # 斬れ味補正
         elemental *= ELEMENTAL_SHARPNESS[condition.weapon[3]]
+        # TODO 怒り補正?
         # 肉質
         elemental *= target[1] / 100
         # 属性会心

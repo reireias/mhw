@@ -74,3 +74,15 @@ class TestCalculate(unittest.TestCase):
         condition.skills['elemental_critical'] = 1
         dmg = calculate(target, motion, condition)
         self.assertEqual(556.5, dmg)
+
+    def test_apply(self):
+        """
+        test for apply method
+        """
+        condition = Condition()
+        condition.weapon = (230, 0, 0, 'white')
+        skills = {'weakness': 3}
+        condition.apply(skills)
+        # レウス頭
+        dmg = calculate((65, 30), [7], condition)
+        self.assertEqual(19.5, dmg)
