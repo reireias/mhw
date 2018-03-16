@@ -8,7 +8,7 @@ from collections import defaultdict
 # 斬れ味補正(物理)
 SHARPNESS = {
     'green': 1.05,
-    'blue': 1.25,
+    'blue': 1.20,
     'white': 1.32
 }
 
