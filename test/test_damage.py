@@ -4,7 +4,8 @@ unit test for damage.py
 """
 
 import unittest
-from mhw import Condition, calculate, motionlist, skill_rank
+from collections import defaultdict
+from mhw import Condition, calculate, motionlist, skill_rank, to_label
 
 
 class TestCalculate(unittest.TestCase):
@@ -112,3 +113,13 @@ class TestCalculate(unittest.TestCase):
         rank = skill_rank(target, weapon, motion, 2, include_skills={'weakness': 1})
         self.assertEqual(1, rank[0][1]['non_elemental'])
         self.assertEqual(1, rank[0][1]['weakness'])
+
+    def test_to_label(self):
+        """
+        to_label test
+        """
+        pattern = defaultdict(int)
+        pattern['attack'] = 2
+        pattern['critical_eye'] = 1
+        label = to_label(pattern)
+        self.assertEqual('攻撃2,見切1', label)

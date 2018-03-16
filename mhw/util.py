@@ -4,8 +4,20 @@ utility module for mhw
 """
 
 from itertools import product
-from .damage import Condition, calculate
-from . import motionlist
+from .damage import Condition, calculate, SUPPORTED_SKILLS
+
+LABELS = {
+    'attack': '攻撃',
+    'weakness': '弱特',
+    'critical_eye': '見切',
+    'maximum_might': '渾身',
+    'full_charge': 'フルチャ',
+    'critical_boost': '超会心',
+    'elemental': '属性',
+    'elemental_critical': '属会',
+    'non_elemental': '無撃',
+    'challenger': '挑戦'
+}
 
 
 def generate_skill_patterns():
@@ -86,3 +98,14 @@ def skill_rank(target, weapon, motion, max_skill_point, exclude_skills=None, inc
         result.append((dmg, pattern))
     result.sort(key=lambda x: x[0], reverse=True)
     return result
+
+
+def to_label(pattern):
+    """
+    convert skill pattern dict to str for label
+    """
+    result = []
+    for skill in SUPPORTED_SKILLS:
+        if pattern[skill] > 0:
+            result.append(LABELS[skill] + str(pattern[skill]))
+    return ','.join(result)
